@@ -3,6 +3,9 @@ const expshbs = require("express-handlebars");
 const nodemailer = require("nodemailer");
 const path = require("path");
 
+//require dotenv
+require("dotenv").config();
+
 const app = express();
 
 // set up json with express
@@ -21,7 +24,37 @@ app.get("/", (req, res) => {
 });
 
 app.post("/send", (req, res) => {
-  console.log(req.body);
+  const output = `
+    <p>You have a new contact request</p>
+    <h3>Contact Details</h3>
+    <ul>
+      <li>Name: ${req.body.name}</li>
+      <li>Email: ${req.body.email}</li>
+      <li>Company: ${req.body.company}</li>
+      <li>Phone: ${req.body.phone}</li>
+      
+    </ul>
+    <h3>Message</h3>
+    <p>Message: ${req.body.message}</p>
+   `;
+
+  let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user: PROCESS.ENV.GMAIL_USER,
+      pass: PROCESS.ENV.GMAIL_PASSWORD,
+    },
+  });
+
+  const mailOptions = {
+    from: `${req.body.name} <${req.body.email}>`,
+    to: "troydorman@gmail.com",
+    subject: "Node Contact Request",
+    text: "Hello World!",
+    html: output,
+  };
 });
 
 app.listen(3000, () => console.log("server started on port 3000"));
