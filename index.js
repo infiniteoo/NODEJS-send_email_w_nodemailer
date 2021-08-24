@@ -11,6 +11,8 @@ app.use(express.json({ extended: true }));
 app.engine("handlebars", expshbs());
 app.set("view engine", "handlebars");
 
+// static folder
+app.use(express.static("public"));
 
 app.get("/", (req, res) => {
   res.send("hello!");
