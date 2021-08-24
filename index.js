@@ -43,8 +43,8 @@ app.post("/send", (req, res) => {
     port: 465,
     secure: true,
     auth: {
-      user: PROCESS.ENV.GMAIL_USER,
-      pass: PROCESS.ENV.GMAIL_PASSWORD,
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_PASSWORD,
     },
   });
 
@@ -55,6 +55,15 @@ app.post("/send", (req, res) => {
     text: "Hello World!",
     html: output,
   };
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log(error);
+    }
+    console.log("Message sent: " + info.message);
+    console.log("preview URL: " + nodemailer.getTestMessageUrl(info));
+
+    res.render("contact", { msg: "Message sent!" });
+  });
 });
 
 app.listen(3000, () => console.log("server started on port 3000"));
